@@ -1,17 +1,20 @@
 export function Heart({
   classNames,
   isFilled = false,
+  handleFilledState,
 }: {
   classNames?: string;
   isFilled?: boolean;
+  handleFilledState: () => void;
 }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill={isFilled ? "red" : "none"}
+      fill={isFilled ? "#e3170a" : "none"}
       viewBox="0 0 24 24"
       strokeWidth={2}
       stroke="currentColor"
+      onClick={handleFilledState}
       className={"size-8 " + classNames}
     >
       <path
