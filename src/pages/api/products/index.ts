@@ -41,51 +41,55 @@ async function getAllProducts(res: NextApiResponse) {
   return res.status(200).json({ products });
 }
 
-//TODO: MESCLAR FILTRO DE NOME + ORDER
 async function getProductsByFilter(req: NextApiRequest, res: NextApiResponse) {
-  const productsRef = collection(db, "products");
-  const { name, byPriceAsc, byPriceDesc, byStarsAsc, byStarsDesc } = req.query;
+  try {
+    const productsRef = collection(db, "products");
+    const { name, sort } = req.query;
 
-  let q: Query<DocumentData, DocumentData>;
-  // FILTRO POR NOME
-  if (name) {
-    q = query(
-      productsRef,
-      where("searchTerms", "array-contains", req.query.name),
-    );
-  }
+    let q: Query<DocumentData, DocumentData>;
+    // FILTRO POR NOME
+    if (name) {
+      q = query(
+        productsRef,
+        where("searchTerms", "array-contains", req.query.name),
+      );
+    }
 
-  // FILTRO POR PREÇO MENOR PARA MAIOR
-  if (byPriceAsc) {
-    q = query(productsRef, orderBy("price", "asc"));
-  }
-  // FILTRO POR PREÇO MAIOR PARA MENOR
-  if (byPriceDesc) {
-    q = query(productsRef, orderBy("price", "desc"));
-  }
-  // FILTRO POR ESTRELAS MENOR PARA MAIOR
-  if (byStarsAsc) {
-    q = query(productsRef, orderBy("rating.stars", "asc"));
-  }
-  // FILTRO POR PREÇO MAIOR PARA MENOR
-  if (byStarsDesc) {
-    q = query(productsRef, orderBy("rating.stars", "desc"));
-  }
+    // FILTRO POR PREÇO MENOR PARA MAIOR
+    if (sort === "byPriceAsc") {
+      q = query(q || productsRef, orderBy("price", "asc"));
+    }
+    // FILTRO POR PREÇO MAIOR PARA MENOR
+    if (sort === "byPriceDesc") {
+      q = query(q || productsRef, orderBy("price", "desc"));
+    }
+    // FILTRO POR ESTRELAS MENOR PARA MAIOR
+    if (sort === "byStarsAsc") {
+      q = query(q || productsRef, orderBy("rating.stars", "asc"));
+    }
+    // FILTRO POR PREÇO MAIOR PARA MENOR
+    if (sort === "byStarsDesc") {
+      q = query(q || productsRef, orderBy("rating.stars", "desc"));
+    }
 
-  const querySnapshot = await getDocs(q);
+    const querySnapshot = await getDocs(q);
 
-  const filteredProduct = querySnapshot.docs.map((doc) => {
-    const data = doc.data();
+    const filteredProduct = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
 
-    return data;
-  });
+      return data;
+    });
 
-  if (filteredProduct.length > 0) {
-    return res.status(200).json({ products: filteredProduct });
-  } else {
-    return res
-      .status(200)
-      .json({ products: [], message: "Nenhum produto encontrado" });
+    if (filteredProduct.length > 0) {
+      return res.status(200).json({ products: filteredProduct });
+    } else {
+      return res
+        .status(200)
+        .json({ products: [], message: "Nenhum produto encontrado" });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send("failed to fetch products");
   }
 }
 
