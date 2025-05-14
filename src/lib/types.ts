@@ -8,3 +8,8 @@ export interface Product {
   rating: { stars: number; reviews: number };
   createdAt: Date;
 }
+
+export interface IProductsContext {
+  products: Product[];
+  updateProducts: (products: Product[]) => void;
+}
