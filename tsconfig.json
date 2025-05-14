@@ -3,7 +3,8 @@
     "baseUrl": "src/",
     "paths": {
       "@/styles/*": ["styles/*"],
-      "@/components/*": ["components/*"]
+      "@/components/*": ["components/*"],
+      "@/contexts/*": ["contexts/*"]
     },
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -21,5 +22,5 @@
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"],
-  "extends": "@total-typescript/tsconfig/bundler/dom/app",
+  "extends": "@total-typescript/tsconfig/bundler/dom/app"
 }
